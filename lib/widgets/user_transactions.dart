@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './transaction_list.dart';
 import './add_transactions.dart';
+import './chart.dart';
 
 import '../models/transaction.dart';
 
@@ -15,38 +16,58 @@ class UserTransactions extends StatefulWidget {
 class _UserTransactionsState extends State<UserTransactions> {
   final List<Transaction> _transactions = [
     Transaction(
-        id: '1', title: 'Levis Short', amount: 99.99, date: DateTime.now()),
+        id: DateTime.now().toString(),
+        title: 'Levis Short',
+        amount: 20.0,
+        date: DateTime.now().subtract(const Duration(days: 2))),
     Transaction(
-        id: '2',
+        id: DateTime.now().toString(),
         title: 'Xiaomi Redmi Note 11',
-        amount: 695.19,
-        date: DateTime.now())
+        amount: 1.19,
+        date: DateTime.now().subtract(const Duration(days: 2)))
   ];
 
-  void _addNewTransaction(String title, double amount) {
+  void _addNewTransaction(String title, double amount, DateTime date) {
     final newTransaction = Transaction(
-        id: DateTime.now().toString(),
-        title: title,
-        amount: amount,
-        date: DateTime.now());
+      id: DateTime.now().toString(),
+      title: title,
+      amount: amount,
+      date: date,
+    );
     setState(() {
       _transactions.add(newTransaction);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((tx) => tx.id == id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Card(
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            height: 100,
-            child: const Center(child: Text('CHART!')),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            height: 180,
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            child: Chart(
+              recentTransactions: _transactions,
+            ),
           ),
-        ),
-        TransactionList(transactions: _transactions),
-      ]),
+          _transactions.isNotEmpty
+              ? TransactionList(
+                  transactions: _transactions,
+                  deleteTransaction: _deleteTransaction)
+              : Container(
+                  color: Colors.red,
+                ),
+        ],
+      ),
       extendBody: true,
       bottomNavigationBar: BottomAppBar(
           color: Theme.of(context).primaryColor,

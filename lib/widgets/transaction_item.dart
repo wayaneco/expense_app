@@ -2,56 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionItem extends StatelessWidget {
+  final String id;
   final String title;
   final double amount;
   final DateTime date;
+  final deleteTransaction;
 
-  const TransactionItem(
-      {Key? key, required this.title, required this.amount, required this.date})
-      : super(key: key);
+  const TransactionItem({
+    Key? key,
+    required this.id,
+    required this.title,
+    required this.amount,
+    required this.date,
+    this.deleteTransaction,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-          child: Row(
-            children: [
-              Container(
-                width: 65,
-                margin: const EdgeInsets.only(right: 10),
-                child: Text(
-                  '₱${amount.toString()}',
+      elevation: 1.1,
+      child: ListTile(
+        leading: FittedBox(
+          alignment: Alignment.center,
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: CircleAvatar(
+              backgroundColor: Theme.of(context).primaryColorLight,
+              radius: 30,
+              child: Padding(
+                padding: EdgeInsets.all(6),
+                child: FittedBox(
+                  child: Text('₱${amount.toString()}'),
                 ),
               ),
-              Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 5),
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    DateFormat('MMMM d, y h:m a').format(date),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ],
-              )),
-              IconButton(
-                  padding: const EdgeInsets.all(0),
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.delete_outline_outlined,
-                    color: Colors.red,
-                  ))
-            ],
-          )),
+            ),
+          ),
+        ),
+        title: Text('$title'),
+        subtitle: Text(DateFormat.yMMMd().format(date)),
+        trailing: IconButton(
+          icon: Icon(Icons.delete),
+          color: Theme.of(context).primaryColor,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onPressed: () {
+            deleteTransaction(id);
+          },
+        ),
+      ),
     );
   }
 }
